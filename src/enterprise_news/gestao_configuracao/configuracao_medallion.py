@@ -160,3 +160,4 @@ class ConfiguracaoMedallion:
             ),
             marts_gold=marts,
         )
+

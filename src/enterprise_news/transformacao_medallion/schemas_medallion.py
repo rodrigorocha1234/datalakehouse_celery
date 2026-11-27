@@ -230,3 +230,4 @@ class MartQualidadeDados:
     total_valid_records: int
     total_quarantined_records: int
     quality_status: str
+

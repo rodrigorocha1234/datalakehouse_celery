@@ -166,3 +166,4 @@ def test_deteccao_schema_drift_e_reprovacao_qualidade_lote() -> None:
     registro_ruim = _criar_registro_bronze_sintetico("hash_ruim", titulo="abc")
     with pytest.raises(ErroQualidadeDados, match="reprovada"):
         job_silver.transformar_registros_bronze("lote_reprovado", [registro_ruim])
+

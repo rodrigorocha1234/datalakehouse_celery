@@ -16,3 +16,4 @@
 ## Decisão
 
 Adotar **Parquet particionado idempotente no Object Storage S3** como formato primário nas camadas Silver e Gold nesta fase, mantendo os contratos de schema (`ContratoSchemaMedallion`) explícitos e compatíveis com futura migração transparente para catálogo Iceberg no Trino sem alterar os nomes das 4 dimensões (`dim_source`, `dim_date`, `dim_category`, `dim_language`), 3 fatos (`fact_news`, `fact_feed_execution`, `fact_data_quality`) e 5 marts (`mart_volume_diario`, `mart_desempenho_fontes`, `mart_distribuicao_categorias`, `mart_frescor_ingestao`, `mart_qualidade_dados`).
+

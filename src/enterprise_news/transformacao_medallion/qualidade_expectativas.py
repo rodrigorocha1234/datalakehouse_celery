@@ -171,3 +171,4 @@ class ValidadorQualidadeExpectativas:
             taxa_aprovacao_registros=round(taxa_aprovacao, 4),
             aprovado=True,
         )
+

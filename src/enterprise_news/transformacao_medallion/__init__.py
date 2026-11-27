@@ -61,3 +61,4 @@ __all__ = [
     "limpar_texto_editorial",
     "normalizar_url_canonica",
 ]
+
