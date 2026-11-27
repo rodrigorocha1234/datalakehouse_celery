@@ -1,0 +1,15 @@
+/.env
+/.venv
+/celerybeat_data
+/flower_data
+/grafana_data
+/prometheus_data
+/prometheus_multiproc
+/rabbitmq_data
+/spark_client_data
+/spark_jobs
+/spark_master_data
+/spark_worker_data
+/storage-data
+/trino_catalog
+/trino_data
