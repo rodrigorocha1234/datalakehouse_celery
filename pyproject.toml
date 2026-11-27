@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "enterprise-news-lakehouse"
+version = "0.1.0"
+description = "Enterprise News Lakehouse — Ingestão RSS, Medallion Bronze/Silver/Gold, Trino, dbt, OpenMetadata e Superset"
+readme = "README.md"
+requires-python = "==3.11.*"
+dependencies = [
+    "boto3>=1.34.0",
+    "celery>=5.4.0,<6.0.0",
+    "feedparser>=6.0.11",
+    "prometheus-client>=0.20.0",
+    "python-dotenv>=1.0.0",
+    "PyYAML>=6.0.1",
+    "requests>=2.32.0",
+    "typing_extensions>=4.10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.10.0",
+    "pytest>=8.0.0",
+    "ruff>=0.4.0",
+    "types-PyYAML>=6.0.12",
+    "types-requests>=2.32.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra -q"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "TCH", "ANN", "TID"]
+ignore = []
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = false
+suppress-none-returning = false
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+disallow_any_explicit = true
+disallow_any_generics = true
+warn_return_any = true
+warn_unused_configs = true
+mypy_path = "src"
+packages = ["enterprise_news"]
+

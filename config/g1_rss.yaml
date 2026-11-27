@@ -1,0 +1,45 @@
+# Uma URL = um item em feeds; várias URLs = vários itens.
+rss:
+  source: g1
+  enabled: true
+  default_interval_minutes: 60
+  request_timeout_seconds: 20
+  max_retries: 4
+  retry_backoff_seconds: 30
+  retry_backoff_max_seconds: 300
+  retry_jitter: true
+  rate_limit_requests_per_minute: 30
+  max_feeds_capacity: 100
+  user_agent: "EnterpriseNewsLakehouse/0.2 (+https://g1.globo.com)"
+  queue: enl.rss.ingestion
+  dlq_queue: enl.ops.dlq
+  dlx_exchange: enl.dlx
+  lock_ttl_seconds: 300
+  feeds:
+    - id: g1_principal
+      name: G1 — Principal
+      url: https://g1.globo.com/rss/g1/
+      enabled: true
+      category: noticias
+      language: pt-BR
+    - id: g1_economia
+      name: G1 — Economia
+      url: https://g1.globo.com/rss/g1/economia/
+      enabled: true
+      category: economia
+      language: pt-BR
+      interval_minutes: 30
+    - id: g1_tecnologia
+      name: G1 — Tecnologia e Games
+      url: https://g1.globo.com/rss/g1/tecnologia/
+      enabled: true
+      category: tecnologia
+      language: pt-BR
+      interval_minutes: 45
+    - id: g1_educacao_inativo
+      name: G1 — Educação (Desabilitado)
+      url: https://g1.globo.com/rss/g1/educacao/
+      enabled: false
+      category: educacao
+      language: pt-BR
+      interval_minutes: 120

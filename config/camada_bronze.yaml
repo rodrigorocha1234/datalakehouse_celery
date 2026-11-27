@@ -1,0 +1,22 @@
+# Configuração da Camada Bronze, Object Storage S3, Retenção e Replay — Etapa 3
+bronze:
+  armazenamento_s3:
+    endpoint_url: http://enl_storage:9000
+    regiao: us-east-1
+    bucket_bronze: enl-bronze
+    bucket_quarentena: enl-quarentena
+    prefixo_objetos_bronze: bronze/g1_rss
+    prefixo_objetos_quarentena: quarentena/g1_rss
+    forcar_path_style: true
+
+  retencao:
+    dias_retencao_payload_bruto: 365
+    dias_retencao_quarentena: 90
+    dias_retencao_checkpoints_sql: 180
+    politica_imutabilidade: append_only_idempotente
+
+  resiliencia:
+    permitir_replay_lote_parcial: true
+    quarentenar_payload_invalido: true
+    validar_checksum_sha256: true
+

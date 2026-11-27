@@ -1,0 +1,44 @@
+# Configuração de fundação e isolamento do Enterprise News Lakehouse
+projeto:
+  nome: enterprise-news-lakehouse
+  ambiente: desenvolvimento
+  fuso_horario_servicos: America/Sao_Paulo
+  fuso_horario_analitico: UTC
+  raiz_volumes: ./volumes
+
+isolamento:
+  prefixo_volumes: enl_
+  prefixo_filas: enl.
+  prefixo_servicos: enl_
+  vhost_rabbitmq: enl_vhost
+  rede_docker: news-network
+
+armazenamento_objetos:
+  endpoint_interno: http://enl_storage:9000
+  regiao: us-east-1
+  bucket_bronze: enl-bronze
+  bucket_silver: enl-silver
+  bucket_gold: enl-gold
+  bucket_quarentena: enl-quarentena
+
+filas_celery:
+  fila_ingestao: enl.rss.ingestion
+  fila_bronze: enl.medallion.bronze
+  fila_silver: enl.medallion.silver
+  fila_gold: enl.medallion.gold
+  fila_monitoramento: enl.ops.monitoramento
+  fila_dlq: enl.ops.dlq
+
+volumes_obrigatorios:
+  - ./volumes/enl_rabbitmq
+  - ./volumes/enl_postgres
+  - ./volumes/enl_storage
+  - ./volumes/enl_celerybeat
+  - ./volumes/enl_prometheus_multiproc
+  - ./volumes/enl_trino
+  - ./volumes/enl_trino_catalog
+  - ./volumes/enl_spark_master
+  - ./volumes/enl_spark_worker
+  - ./volumes/enl_spark_client
+  - ./volumes/enl_spark_jobs
+

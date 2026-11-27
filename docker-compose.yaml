@@ -272,6 +272,144 @@ services:
       news-network:
         ipv4_address: 172.28.50.33
 
+  enl_rabbitmq:
+    image: rabbitmq:4-management
+    container_name: enl_rabbitmq
+    hostname: enl-rabbitmq
+    profiles: [enl_fundacao]
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${ENL_RABBITMQ_USER:-enl_usuario}
+      RABBITMQ_DEFAULT_PASS: ${ENL_RABBITMQ_PASSWORD:-enl_senha_dev}
+      RABBITMQ_DEFAULT_VHOST: ${ENL_RABBITMQ_VHOST:-enl_vhost}
+      TZ: America/Sao_Paulo
+    ports:
+      - "127.0.0.1:${ENL_RABBITMQ_PORT:-5673}:5672"
+      - "127.0.0.1:${ENL_RABBITMQ_MGMT_PORT:-15673}:15672"
+    volumes:
+      - ./volumes/enl_rabbitmq:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      news-network:
+        ipv4_address: 172.28.50.40
+
+  enl_postgres:
+    image: postgres:16-alpine
+    container_name: enl_postgres
+    hostname: enl-postgres
+    profiles: [enl_fundacao]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${ENL_POSTGRES_USER:-enl_postgres}
+      POSTGRES_PASSWORD: ${ENL_POSTGRES_PASSWORD:-enl_postgres_dev}
+      POSTGRES_DB: ${ENL_POSTGRES_DB:-enl_operacional}
+      TZ: America/Sao_Paulo
+    ports:
+      - "127.0.0.1:${ENL_POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - ./volumes/enl_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ENL_POSTGRES_USER:-enl_postgres} -d ${ENL_POSTGRES_DB:-enl_operacional}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      news-network:
+        ipv4_address: 172.28.50.41
+
+  enl_storage:
+    image: rustfs/rustfs:1.0.0-alpha.83
+    container_name: enl_storage
+    hostname: enl-storage
+    profiles: [enl_fundacao]
+    restart: unless-stopped
+    environment:
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_REGION: ${ENL_STORAGE_REGION:-us-east-1}
+      RUSTFS_ACCESS_KEY: ${ENL_STORAGE_ACCESS_KEY:-enl_storage_admin}
+      RUSTFS_SECRET_KEY: ${ENL_STORAGE_SECRET_KEY:-enl_storage_secret}
+      RUSTFS_CONSOLE_ENABLE: ${RUSTFS_CONSOLE_ENABLE:-true}
+      TZ: America/Sao_Paulo
+    ports:
+      - "127.0.0.1:${ENL_STORAGE_PORT:-9010}:9000"
+      - "127.0.0.1:${ENL_STORAGE_CONSOLE_PORT:-9011}:9001"
+    volumes:
+      - ./volumes/enl_storage:/data
+    healthcheck:
+      test: ["CMD-SHELL", "echo > /dev/tcp/127.0.0.1/9000 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      news-network:
+        ipv4_address: 172.28.50.42
+
+  enl_celery_worker_rss:
+    build: *celery-build
+    container_name: enl_celery_worker_rss
+    hostname: enl-celery-worker-rss
+    profiles: [enl_ingestao]
+    restart: unless-stopped
+    environment:
+      CELERY_BROKER_URL: amqp://${ENL_RABBITMQ_USER:-enl_usuario}:${ENL_RABBITMQ_PASSWORD:-enl_senha_dev}@enl_rabbitmq:5672/${ENL_RABBITMQ_VHOST:-enl_vhost}
+      CELERY_RESULT_BACKEND: rpc://
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: /app/src
+      TZ: America/Sao_Paulo
+      PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus
+    volumes:
+      - ./volumes/enl_prometheus_multiproc:/tmp/prometheus
+    depends_on:
+      enl_rabbitmq:
+        condition: service_healthy
+      enl_postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c 'import enterprise_news' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      news-network:
+        ipv4_address: 172.28.50.43
+
+  enl_celery_beat:
+    build: *celery-build
+    container_name: enl_celery_beat
+    hostname: enl-celery-beat
+    profiles: [enl_ingestao]
+    restart: unless-stopped
+    environment:
+      CELERY_BROKER_URL: amqp://${ENL_RABBITMQ_USER:-enl_usuario}:${ENL_RABBITMQ_PASSWORD:-enl_senha_dev}@enl_rabbitmq:5672/${ENL_RABBITMQ_VHOST:-enl_vhost}
+      CELERY_RESULT_BACKEND: rpc://
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: /app/src
+      TZ: America/Sao_Paulo
+      PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus
+    volumes:
+      - ./volumes/enl_celerybeat:/app/celerybeat
+      - ./volumes/enl_prometheus_multiproc:/tmp/prometheus
+    depends_on:
+      enl_rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "test -d /app/celerybeat || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      news-network:
+        ipv4_address: 172.28.50.44
+
 networks:
   news-network:
     driver: bridge

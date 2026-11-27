@@ -13,3 +13,4 @@
 /storage-data
 /trino_catalog
 /trino_data
+*.pyc
