@@ -10,6 +10,7 @@ from enterprise_news.gestao_configuracao.configuracao_fundacao import (
     ConfiguracaoFundacao,
     ConfiguracaoVolumes,
 )
+from enterprise_news.gestao_configuracao.configuracao_medallion import ConfiguracaoMedallion
 from enterprise_news.gestao_configuracao.configuracao_rss import (
     ConfiguracaoFeedRss,
     ConfiguracaoRss,
@@ -225,10 +226,23 @@ class CarregadorConfiguracao:
         mapa = cls.carregar_mapa_yaml(caminho_arquivo)
         return ConfiguracaoCamadaBronze.carregar_de_mapa(mapa)
 
+    @classmethod
+    def carregar_configuracao_medallion(cls, caminho_arquivo: Path) -> ConfiguracaoMedallion:
+        """Carrega e valida o arquivo config/camadas_medallion.yaml."""
+        mapa = cls.carregar_mapa_yaml(caminho_arquivo)
+        return ConfiguracaoMedallion.carregar_de_mapa(mapa)
+
 
 def carregar_configuracao_bronze_padrao(
     caminho_yaml: str = "config/camada_bronze.yaml",
 ) -> ConfiguracaoCamadaBronze:
     """Carrega a configuração YAML da camada Bronze a partir do caminho informado."""
     return CarregadorConfiguracao.carregar_configuracao_bronze(Path(caminho_yaml))
+
+
+def carregar_configuracao_medallion_padrao(
+    caminho_yaml: str = "config/camadas_medallion.yaml",
+) -> ConfiguracaoMedallion:
+    """Carrega a configuração YAML das camadas Silver e Gold a partir do caminho informado."""
+    return CarregadorConfiguracao.carregar_configuracao_medallion(Path(caminho_yaml))
 

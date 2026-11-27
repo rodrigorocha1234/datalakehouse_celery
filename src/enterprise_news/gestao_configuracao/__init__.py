@@ -3,6 +3,7 @@
 from enterprise_news.gestao_configuracao.carregador_yaml import (
     CarregadorConfiguracao,
     carregar_configuracao_bronze_padrao,
+    carregar_configuracao_medallion_padrao,
 )
 from enterprise_news.gestao_configuracao.configuracao_bronze import (
     ConfiguracaoCamadaBronze,
@@ -11,6 +12,9 @@ from enterprise_news.gestao_configuracao.configuracao_bronze import (
 from enterprise_news.gestao_configuracao.configuracao_fundacao import (
     ConfiguracaoFundacao,
     ConfiguracaoVolumes,
+)
+from enterprise_news.gestao_configuracao.configuracao_medallion import (
+    ConfiguracaoMedallion,
 )
 from enterprise_news.gestao_configuracao.configuracao_rss import (
     ConfiguracaoFeedRss,
@@ -31,6 +35,7 @@ __all__ = [
     "ConfiguracaoCamadaBronze",
     "ConfiguracaoFeedRss",
     "ConfiguracaoFundacao",
+    "ConfiguracaoMedallion",
     "ConfiguracaoRss",
     "ConfiguracaoVolumes",
     "InspetorInfraestrutura",
@@ -40,5 +45,5 @@ __all__ = [
     "ValorYaml",
     "ValorYamlPrimitivo",
     "carregar_configuracao_bronze_padrao",
+    "carregar_configuracao_medallion_padrao",
 ]
-

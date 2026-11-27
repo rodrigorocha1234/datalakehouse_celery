@@ -70,3 +70,16 @@ class ErroArmazenamentoObjetos(ErroCamadaBronze):
 class ErroTransicaoCheckpoint(ErroCamadaBronze):
     """Exceção lançada quando ocorre uma transição de estado inválida em um lote Bronze."""
 
+
+class ErroTransformacaoMedallion(RuntimeError):
+    """Exceção base para falhas nas transformações Silver e Gold."""
+
+
+@final
+class ErroDerivaSchema(ErroTransformacaoMedallion):
+    """Exceção lançada quando ocorre schema drift incompatível na entrada Bronze/Silver."""
+
+
+@final
+class ErroQualidadeDados(ErroTransformacaoMedallion):
+    """Exceção lançada quando o índice de qualidade fica abaixo do limiar mínimo configurado."""

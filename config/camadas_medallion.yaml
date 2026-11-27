@@ -1,0 +1,55 @@
+# Configuração das Camadas Silver e Gold (PySpark, Schemas, Qualidade e Marts) — Etapa 4
+medallion:
+  armazenamento:
+    bucket_bronze: enl-bronze
+    bucket_silver: enl-silver
+    bucket_gold: enl-gold
+    bucket_quarentena: enl-quarentena
+    prefixo_silver: silver/noticias_limpas
+    prefixo_quarentena_silver: quarentena/silver_rejeitados
+    prefixo_gold_dimensoes: gold/dimensoes
+    prefixo_gold_fatos: gold/fatos
+    prefixo_gold_marts: gold/marts
+    formato_arquivos: parquet
+
+  regras_silver:
+    exigir_url_https: true
+    tamanho_minimo_titulo: 5
+    remover_parametros_rastreamento_url: true
+    bloquear_schema_drift_campos_desconhecidos: false
+    campos_obrigatorios_bronze:
+      - batch_id
+      - feed_id
+      - guid
+      - title
+      - link
+      - summary
+      - categories
+      - published_at_utc
+      - collected_at_utc
+      - dedup_hash
+
+  qualidade_great_expectations:
+    taxa_minima_aprovacao_lote: 0.50
+    regras_ativas:
+      - expect_column_values_to_not_be_null:dedup_hash
+      - expect_column_values_to_not_be_null:title
+      - expect_column_values_to_match_regex:canonical_url
+      - expect_column_value_lengths_to_be_between:title
+
+  catalogo_gold:
+    dimensoes:
+      - dim_source
+      - dim_date
+      - dim_category
+      - dim_language
+    fatos:
+      - fact_news
+      - fact_feed_execution
+      - fact_data_quality
+    marts:
+      - mart_volume_diario
+      - mart_desempenho_fontes
+      - mart_distribuicao_categorias
+      - mart_frescor_ingestao
+      - mart_qualidade_dados
